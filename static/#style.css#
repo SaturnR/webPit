@@ -1,0 +1,11 @@
+#serial{
+    margin-top:0px;
+    margin-left:500px;
+    position:absolute;
+    
+}
+
+
+#sdata{
+    
+}
