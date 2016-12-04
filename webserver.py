@@ -59,9 +59,9 @@ def readSerial():
     while True:
         global serial_data
         serial_data += str(ser.readline().strip())[2:-1]+'\n'
-        #print(serial_data)
+        print(serial_data)
 
-run(app, host='0.0.0.0', port=6886, debag = False)
+run(app, host='127.0.0.1', port=6886, debag = False)
 
     
 
