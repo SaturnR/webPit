@@ -1,6 +1,19 @@
 
 dt = null;
 
+$("#fuses").hide();
+
+$(function () {
+    $("#checkbox_fuses").click(function () {
+        if ($(this).is(":checked")) {
+            $("#fuses").show();
+        } else {
+            $("#fuses").hide();
+        }
+    });
+});
+
+
 $(document).ready ( function(){
     $.ajax({
 	url : "/program",

@@ -5,10 +5,22 @@
   <h1>Upload and monitor with serial interface</h1>
   
   <form action="/upload" method="post" enctype="multipart/form-data">
-    Select a HEX File: <input type="file" name="upload" />
-    <input type="submit" value="Start upload" />
+    Select a HEX File: <input type="file" name="upload" /><br><br>
+    Erase: <input type="checkbox" name="erase" value="true" checked><br><br>
+    Fuse bits <input id = "checkbox_fuses" type="checkbox" name="program_fuses" value="true"/><br>
+    <div id="fuses">
+      Low: <input type="text" size = 2 name="low_fuses" value="EF"/><br>
+      High: <input type="text" size = 2 name="high_fuses" value="D8"/><br>
+      Ext: <input type="text" size = 2 name="ext_fuses" value="FF"/><br>
+    </div>
+    <br>
+    <br>
+    <input type="submit" name = "upload" value="Upload" />
+    <input type="submit" name = "download" value="Read" />
+    
   </form>
-
+  
+  
   <textarea disabled id="prog_text" rows="30" cols="50"> </textarea>
     
   <div id = "serial">

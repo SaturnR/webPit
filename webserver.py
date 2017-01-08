@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.4
+#!/usr/bin/env python3
 
 import socket
 import time
@@ -18,21 +18,55 @@ prog_data = ''
 def main():
     return template('view')
 
-@app.route('/upload', method='POST')
-def do_upload():
-    #category   = request.forms.get('category')
-    upload     = request.files.get('upload')
-    name, ext = os.path.splitext(upload.filename)
-    if ext != '.hex' :
-        return 'File extension not allowed.'
+#@route('/download/<filename:path>')
+#def download(filename):
 
-    print('downloading file: ', name)
-    fpath = './firmware.hex'
-    with open(fpath, 'wb') as open_file:
-        open_file.write(upload.file.read())
-    err = pydude.write_flash(fpath)
+@app.route('/upload', method='POST')
+def upload():
     global prog_data
-    prog_data = err
+    #category   = request.forms.get('category')
+    postdata = request.params
+
+    fus = request.forms.get("program_fuses")
+    #print('fuses', fus)
+    if fus == 'true':
+        print('program fuses')
+        low = '0x'+postdata['low_fuses']
+        high = '0x'+postdata['high_fuses']
+        ext = '0x'+postdata['ext_fuses']
+        err = pydude.setfuses(low, high, ext)
+        print(low, high, ext)
+        #pydude.reprint(err)
+        prog_data = err
+    #print('#################### data received ####################')
+    #for data in postdata:
+    #    print(data, postdata[data])
+    #print('#######################################################')
+    upload_req = request.files.get('upload')
+    if upload_req != None:
+        #postdata['upload'] == 'Upload' and 
+        name, ext = os.path.splitext(upload_req.filename)
+        if ext != '.hex' :
+            return 'File extension not allowed.'
+        
+        print('uploading file: ', name)
+        fpath = './firmware.hex'
+        with open(fpath, 'wb') as open_file:
+            open_file.write(upload_req.file.read())
+
+        erase = request.forms.get("erase")
+        print('-------------- ',erase, '--------------')
+        if erase  == 'true':
+            err = pydude.write_flash(fpath, erase = True)
+        else:
+            err = pydude.write_flash(fpath)
+            
+        prog_data = err
+    elif request.forms.get("download")  == 'Read':
+        pydude.read()
+        return static_file('flash.hex', root='./', download='flash.hex')
+        print('reading a file')
+        
     return redirect("/")
 
 
@@ -49,7 +83,6 @@ def get_serial_data():
 def serial_json(filepath):
     return static_file(filepath, root = '/serial/')
 
-
 @app.route('/static/<filepath:path>')
 def static_js(filepath):
     return static_file(filepath, root='./static/')
@@ -61,7 +94,8 @@ def readSerial():
         serial_data += str(ser.readline().strip())[2:-1]+'\n'
         print(serial_data)
 
-run(app, host='127.0.0.1', port=6886, debag = False)
+
+run(app, host='0.0.0.0', port=6886, debag = True, autoreload = True)
 
     
 
