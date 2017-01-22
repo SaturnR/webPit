@@ -1,4 +1,4 @@
-
+scroll = true;
 dt = null;
 
 $("#fuses").hide();
@@ -13,8 +13,17 @@ $(function () {
     });
 });
 
+$("#auto_scroll").click( function(){
+    if( $(this).is(':checked') ){
+	//alert("checked");
+	scroll = true;
+    }else{
+	//alert("unchecked");
+	scroll = false
+    }
+});
 
-$(document).ready ( function(){
+$(document).ready (function(){
     $.ajax({
 	url : "/program",
 	dataType: "text",
@@ -29,8 +38,10 @@ function loadNowPlaying(){
 	url : "/serial",
 	dataType: "text",
 	success : function (data) {
-	    $("#sdata").text(data);
-	    $('#sdata').scrollTop(9999999);
+	    if(scroll) {
+		$("#sdata").text(data);
+		$('#sdata').scrollTop(9999999);
+	    }
 	}
     });
     //console.log($('#sdata')[0].scrollHeight);

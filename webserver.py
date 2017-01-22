@@ -8,7 +8,11 @@ import serial as pys
 from srthread import Thread
 import pydude
 
-ser = pys.Serial('/dev/ttyUSB0', 9600)
+
+SERDEV = '/dev/ttyUSB0'
+BOD = 9600
+
+ser = pys.Serial(SERDEV, BOD)
 app = Bottle()
 
 serial_data = ''
@@ -31,9 +35,9 @@ def upload():
     #print('fuses', fus)
     if fus == 'true':
         print('program fuses')
-        low = '0x'+postdata['low_fuses']
-        high = '0x'+postdata['high_fuses']
-        ext = '0x'+postdata['ext_fuses']
+        low = '0x' + postdata['low_fuses']
+        high = '0x' + postdata['high_fuses']
+        ext = '0x' + postdata['ext_fuses']
         err = pydude.setfuses(low, high, ext)
         print(low, high, ext)
         #pydude.reprint(err)
@@ -70,6 +74,14 @@ def upload():
     return redirect("/")
 
 
+@app.route('/clear', method='GET')
+def clear():
+    global serial_data
+    global ser
+    serial_data = ''
+    ser = pys.Serial(SERDEV, BOD)
+    return redirect('/')
+
 @app.route('/serial', method='GET')
 def get_serial_data():
     return serial_data
@@ -78,6 +90,7 @@ def get_serial_data():
 def get_serial_data():
     print(prog_data)
     return prog_data
+
 
 @app.route('/serial/<filepath:path>')
 def serial_json(filepath):
@@ -91,11 +104,12 @@ def static_js(filepath):
 def readSerial():
     while True:
         global serial_data
-        serial_data += str(ser.readline().strip())[2:-1]+'\n'
-        print(serial_data)
+        rec = str(ser.readline().strip())[2:-1]+'\n'
+        serial_data += rec
+        print(rec)
 
 
-run(app, host='0.0.0.0', port=6886, debag = True, autoreload = True)
+run(app, host='0.0.0.0', port=6886, debag = True)
 
     
 

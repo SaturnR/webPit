@@ -24,11 +24,10 @@
   <textarea disabled id="prog_text" rows="30" cols="50"> </textarea>
     
   <div id = "serial">
-  
-    <textarea id="sdata" rows="30" cols="50">
-    </textarea>
-    
+    <textarea id="sdata" rows="30" cols="50"> </textarea>
+    <input type="checkbox" id="auto_scroll" name = "auto_scroll" value="auto scroll" checked/>
     <a class="button" href="/serial" download="log.txt" >Save</a>
+    <a class="button" href="/clear">Clear</a>
   </div>
 
   <script src="/static/jquery.min.js"></script>
