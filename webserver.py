@@ -15,7 +15,7 @@ BOD = 9600
 ser = pys.Serial(SERDEV, BOD)
 app = Bottle()
 
-serial_data = ''
+serial_data = b''
 prog_data = ''
 
 @app.route('/')
@@ -78,7 +78,7 @@ def upload():
 def clear():
     global serial_data
     global ser
-    serial_data = ''
+    serial_data = b''
     ser = pys.Serial(SERDEV, BOD)
     return redirect('/')
 
@@ -104,12 +104,11 @@ def static_js(filepath):
 def readSerial():
     while True:
         global serial_data
-        rec = str(ser.readline().strip())[2:-1]+'\n'
+        rec =  ser.read()
+        #rec = str(ser.readline().strip())[2:-1]+'\n'
         serial_data += rec
         print(rec)
 
-
 run(app, host='0.0.0.0', port=6886, debag = True)
 
-    
 

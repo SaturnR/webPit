@@ -235,3 +235,7 @@ def flash():
     out, err = process.communicate()
     exit_code = process.wait()
     return err
+
+
+
+#avrdude -p m644p -c usbasp -t
