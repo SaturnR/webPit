@@ -17,7 +17,7 @@
     <br>
     <input type="submit" name = "upload" value="Upload" />
     <input type="submit" name = "download" value="Read" />
-    
+    <input type="submit" name = "lock_read" value="Lock read" />
   </form>
   
   

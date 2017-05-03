@@ -25,6 +25,8 @@ def main():
 #@route('/download/<filename:path>')
 #def download(filename):
 
+#@app.route('/')
+
 @app.route('/upload', method='POST')
 def upload():
     global prog_data
@@ -70,6 +72,10 @@ def upload():
         pydude.read()
         return static_file('flash.hex', root='./', download='flash.hex')
         print('reading a file')
+    elif request.forms.get('lock_read') == 'Lock read':
+        err = pydude.lock_read()
+        print('lock bits written')
+        prog_data = err
         
     return redirect("/")
 
@@ -110,5 +116,6 @@ def readSerial():
         print(rec)
 
 run(app, host='0.0.0.0', port=6886, debag = True)
+
 
 

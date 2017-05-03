@@ -123,7 +123,7 @@ class Fuses():
         exit_code = process.wait()
         return err
     
-
+    
     def verbose(self, low, high, ext):
         CKDIV8 = low >> 7 
         CKOUT  = (low >> 6) & 1  
@@ -239,3 +239,18 @@ def flash():
 
 
 #avrdude -p m644p -c usbasp -t
+
+def lock_read(mcu = 'm644p'):
+    #s = 'avrdude -c {} -p {} -U lock:w:0x00:m -u'.format(programmer, mcu)
+    
+    args = ['-c', PROGRAMMER, '-p', mcu]
+    
+    prog = 'lock:w:0x00:m'
+    print([PROGRAM]+args+['-U']+[prog]+['-v'])
+    process = Popen([PROGRAM]+args+['-U']+[prog]+['-v'], stderr = PIPE)
+    out, err = process.communicate()
+    exit_code = process.wait()
+    return err
+
+    
+    
