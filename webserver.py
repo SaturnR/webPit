@@ -12,9 +12,16 @@ import pydude
 SERDEV = '/dev/ttyUSB0'
 BOD = 9600
 
-ser = pys.Serial(SERDEV, BOD)
+ser = None
 app = Bottle()
 
+def init_serial():
+    global ser
+    try:
+        ser = pys.Serial(SERDEV, BOD)
+    except pys.serialutil.SerialException as ser_ex:
+        print(ser_ex)
+    
 serial_data = b''
 prog_data = ''
 
@@ -85,7 +92,8 @@ def clear():
     global serial_data
     global ser
     serial_data = b''
-    ser = pys.Serial(SERDEV, BOD)
+    if ser != None:
+        ser = pys.Serial(SERDEV, BOD)
     return redirect('/')
 
 @app.route('/serial', method='GET')
@@ -110,10 +118,14 @@ def static_js(filepath):
 def readSerial():
     while True:
         global serial_data
-        rec =  ser.read()
-        #rec = str(ser.readline().strip())[2:-1]+'\n'
-        serial_data += rec
-        print(rec)
+        if ser != None:
+            rec =  ser.read()
+            #rec = str(ser.readline().strip())[2:-1]+'\n'
+            serial_data += rec
+            print(rec)
+
+            
+init_serial()
 
 run(app, host='0.0.0.0', port=6886, debag = True)
 
