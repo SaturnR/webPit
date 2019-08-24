@@ -33,6 +33,22 @@ $(document).ready (function(){
     });
 });
 
+//----------------------
+$(function() {
+    var submit_form = function(e) {
+	$.getJSON('/serialin', {
+	    data: $('input[name="ain"]').val(),
+	}, function(data) {
+	    $('#status').text(data.status);
+	});
+	return false;
+    };
+    
+    $('a#btnserialin').bind('click', submit_form);
+});
+
+//----------------------
+
 function loadNowPlaying(){
     $.ajax({
 	url : "/serial",

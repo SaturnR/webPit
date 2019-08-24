@@ -7,10 +7,16 @@ import os
 import serial as pys
 from srthread import Thread
 import pydude
+import json
+import sys
+from google_api import file_api
 
-
-SERDEV = '/dev/ttyUSB0'
-BOD = 9600
+if len(sys.argv) > 1:
+    SERDEV = sys.argv[1]
+else:
+    SERDEV = '/dev/ttyUSB1'
+    
+BOD = 115200 #57600 #9600 #38400 #115200 #9600
 
 ser = None
 app = Bottle()
@@ -27,19 +33,14 @@ prog_data = ''
 
 @app.route('/')
 def main():
-    return template('view')
-
-#@route('/download/<filename:path>')
-#def download(filename):
-
-#@app.route('/')
+    return template('view', request=request)
 
 @app.route('/upload', method='POST')
 def upload():
     global prog_data
     #category   = request.forms.get('category')
     postdata = request.params
-
+    
     fus = request.forms.get("program_fuses")
     #print('fuses', fus)
     if fus == 'true':
@@ -86,6 +87,19 @@ def upload():
         
     return redirect("/")
 
+@app.route('/serialin')
+def add_numbers():
+    """Add two numbers server side, ridiculous but well..."""
+    data = request.params.get('data')
+    print(data)
+    try:
+        numbers = data.split(',')
+        b = bytes([int(n) for n in numbers])
+        ser.write(b)
+    except Exception as ex:
+        return json.dumps({'status': str(ex)})
+    
+    return json.dumps({'status': 'Send OK'})
 
 @app.route('/clear', method='GET')
 def clear():
@@ -123,11 +137,31 @@ def readSerial():
             #rec = str(ser.readline().strip())[2:-1]+'\n'
             serial_data += rec
             print(rec)
+        time.sleep(0.001)
 
-            
-init_serial()
+@Thread()
+def downloadFW():
+    f = file_api.GdFile()
+    service = f.GetService()
+    while True:
+        time.sleep(1)
+        if f.md5checksum == None:
+            file_id = f.Download(service)
+            f.md5checksum = f.checkFileChange(f.md5checksum, service, file_id)[0]
+            err = pydude.write_flash('FW.hex', erase = True)
+            prog_data = err
+        else:
+            if f.checkFileChange(f.md5checksum, service, file_id)[1]:
+                f.Download(service)
+                f.md5checksum = f.checkFileChange(f.md5checksum, service, file_id)[0]
+                err = pydude.write_flash('FW.hex', erase = True)
+                prog_data = err
+                print(err)
+            else:
+                print('NOP')
 
-run(app, host='0.0.0.0', port=6886, debag = True)
-
-
-
+if __name__ == "__main__":
+    #file_api.Download()
+    init_serial()
+    run(app, host='127.0.0.1', port=6886, debag = True)
+    

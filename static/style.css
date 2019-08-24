@@ -27,3 +27,9 @@
     margin: 4px 2px;
     cursor: pointer;
 }
+
+#serialinput{
+    position: absolute;
+    margin-left: 500px;
+    margin-top: -20px;
+}
