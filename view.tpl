@@ -17,7 +17,7 @@
     <div id="fuses">
       Low: <input type="text" size = 2 name="low_fuses" value="EF"/><br>
       High: <input type="text" size = 2 name="high_fuses" value="D8"/><br>
-      Ext: <input type="text" size = 2 name="ext_fuses" value="FF"/><br>
+      Ext: <input type="text" size = 2 name="ext_fuses" value="FD"/><br>
     </div>
     <br>
     <br>

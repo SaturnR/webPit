@@ -238,7 +238,7 @@ def reprint(data):
 def setfuses(low='0xEF', high='0xD8', ext='0xFF', mcu="m644p"):
     process = Popen([
         'avrdude', '-c', 'usbasp', '-p', mcu,
-        '-v', '-e', '-u', '-U', 'efuse:w:{}:m'.format(ext), '-U',
+        '-v', '-e', '-U', 'efuse:w:{}:m'.format(ext), '-U',
         'hfuse:w:{}:m'.format(high), '-U', 'lfuse:w:{}:m'.format(low)
     ], stderr=PIPE)
     out, err = process.communicate()

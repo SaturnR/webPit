@@ -9,7 +9,7 @@ from srthread import Thread
 import pydude
 import json
 import sys
-from google_api import file_api
+
 
 if len(sys.argv) > 1:
     SERDEV = sys.argv[1]
@@ -147,6 +147,5 @@ def readSerial():
 
 
 if __name__ == "__main__":
-    # file_api.Download()
     init_serial()
     run(app, host='127.0.0.1', port=6886, debag=True)
